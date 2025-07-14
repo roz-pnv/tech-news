@@ -7,4 +7,4 @@ from utils.slug import generate_unique_slug
 @receiver(pre_save, sender=News)
 def auto_generate_slug(sender, instance, **kwargs):
     if not instance.slug and instance.title:
-        instance.slug = generate_unique_slug(instance, instance.title)
+        instance.slug = generate_unique_slug(instance, source_field='title')
