@@ -7,3 +7,4 @@ class NewsConfig(AppConfig):
 
     def ready(self):
         import news.signals.news_signals
+        import news.signals.tag_signals
