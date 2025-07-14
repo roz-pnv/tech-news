@@ -9,7 +9,7 @@ class News(TimestampedModel):
     slug = models.SlugField(unique=True, blank=True)
     body = models.TextField()
     source = models.CharField(max_length=255)
-    published_at = models.DateTimeField()
+    published_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = "News"
