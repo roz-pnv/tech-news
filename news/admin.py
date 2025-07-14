@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models.news import News
+from .models.news_image import NewsImage
+from .models.tag import Tag
+
+admin.site.register(News)
+admin.site.register(NewsImage)
+admin.site.register(Tag)
