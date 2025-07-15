@@ -1,5 +1,6 @@
 asgiref==3.9.1
 colorama==0.4.6
+coverage==7.9.2
 Django==5.2.4
 django-filter==25.1
 djangorestframework==3.16.0
