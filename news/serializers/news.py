@@ -1,6 +1,9 @@
 from rest_framework import serializers
 
 from news.models import News
+from news.models import NewsImage
+from news.models import Tag
+from news.serializers.news_image import NewsImageSerializer
 
 
 class NewsListSerializer(serializers.ModelSerializer):
@@ -14,3 +17,24 @@ class NewsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
         fields = ['id', 'title', 'slug', 'summary', 'published_at', 'tags']
+
+
+class NewsCreateSerializer(serializers.ModelSerializer):
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+    images = NewsImageSerializer(many=True, required=False)
+
+    class Meta:
+        model = News
+        fields = ['title', 'body', 'source', 'published_at', 'tags', 'images']
+
+    def create(self, validated_data):
+        images_data = validated_data.pop('images', [])
+        tags_data = validated_data.pop('tags', [])
+        news = News.objects.create(**validated_data)
+        news.tags.set(tags_data)
+
+        for image_data in images_data:
+            NewsImage.objects.create(news=news, **image_data)
+
+        return news
+    
