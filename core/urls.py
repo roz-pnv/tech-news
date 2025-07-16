@@ -12,6 +12,8 @@ def redirect_to_api(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
     path('', redirect_to_api),
 	path('api/', APIRootView.as_view(), name='api-root'), 
     path('api/', include('news.urls')), 
