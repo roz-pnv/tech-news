@@ -211,8 +211,10 @@ technews/
 │   ├── models/            # News, Tag, NewsImage models
 │   ├── serializers/       # DRF serializers for API
 │   ├── views/             # ViewSets and filtering logic
-│   ├── urls.py            # App-specific API routes
-│   └── tests/             # Unit tests for news app
+│   ├── urls/              # App-specific API routes
+│   ├── tests/             # Unit tests for news app
+|   ├── admin.py           # Admin configuration for managing news models
+│   └── filters.py         # Filter definitions for querying news via API
 ├── utils/                 # Reusable utilities (slugs, pagination)
 └── manage.py
 ```
