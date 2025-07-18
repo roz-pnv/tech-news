@@ -180,7 +180,11 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Access the API at: [http://localhost:8000/api/](http://localhost:8000/api/)
+##  API Access
+
+- Local development: [http://localhost:8000/](http://localhost:8000/)
+- Production: [https://rozhinpanav.pythonanywhere.com/](https://rozhinpanav.pythonanywhere.com/)
+
 
 ---
 
