@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'news.apps.NewsConfig',
+	'scraper_control.apps.ScraperControlConfig',
 ]
 
 MIDDLEWARE = [
