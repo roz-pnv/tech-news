@@ -7,16 +7,26 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from django.utils import timezone
+from scrapy.exceptions import DropItem
 from asgiref.sync import sync_to_async
 
 from news.models import News
 from news.models import Tag
 from news.models import NewsImage
+from scraper_control.models import ScrapedArticle
 
 
 class NewsCreationPipeline:
     async def process_item(self, item, spider):
+        url = item['source_url']
+
+        exists = await sync_to_async(ScrapedArticle.objects.filter(url=url).exists, thread_sensitive=True)()
+        if exists:
+            spider.logger.info(f"Skipping duplicate article: {url}")
+            raise DropItem("Duplicate article")
+
         await sync_to_async(self.save_item, thread_sensitive=True)(item)
+
         return item
 
     def save_item(self, item):
@@ -38,6 +48,11 @@ class NewsCreationPipeline:
                 image_url=cover["url"],
                 alt_text=cover.get("caption", "None"),
                 is_main=True,
+            )
+
+            ScrapedArticle.objects.create(
+                url=item['source_url'],
+                mapped_to=news
             )
 
         for idx, image in enumerate(item.get("inline_images", [])):
