@@ -79,7 +79,7 @@ TELNETCONSOLE_ENABLED = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   "news_scraper.pipelines.NewsScraperPipeline": 300,
+   "news_scraper.pipelines.NewsCreationPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -12,16 +12,13 @@ from news.models import NewsImage
 
 
 class NewsScraperItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
     pass
 
-class NewsItem(DjangoItem):
-    django_model = News
-
-class TagItem(DjangoItem):
-    django_model = Tag
-
-class TagItem(DjangoItem):
-    django_model = NewsImage
-
+class ZoomitArticleItem(scrapy.Item):
+    title = scrapy.Field()
+    tags = scrapy.Field()
+    published_at = scrapy.Field()
+    cover_image = scrapy.Field()
+    inline_images = scrapy.Field()
+    content = scrapy.Field()
+    source_url = scrapy.Field()
