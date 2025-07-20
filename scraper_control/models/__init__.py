@@ -1,0 +1,1 @@
+from .ScrapedArticle import ScrapedArticle

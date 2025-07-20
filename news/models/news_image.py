@@ -6,7 +6,7 @@ class NewsImage(TimestampedModel):
     news = models.ForeignKey("News", on_delete=models.CASCADE, related_name="images")
     image_file = models.ImageField(upload_to="news/images/", null=True, blank=True)
     image_url = models.URLField(max_length=1000, null=True, blank=True)
-    alt_text = models.CharField(max_length=255)
+    alt_text = models.CharField(max_length=255, null=True, blank=True)
     is_main = models.BooleanField(default=False)
     position = models.PositiveIntegerField(
         null=True, 

@@ -23,7 +23,7 @@ class NewsListViewSet(ListModelMixin, GenericViewSet):
     def get_queryset(self):
         now = timezone.now()
         return (
-            News.objects.filter(published_at__lte=now)
+            News.objects.filter(published_at__isnull=False)
             .prefetch_related('tags')
             .order_by('-published_at')  
         )
