@@ -2,13 +2,19 @@ import re
 import jdatetime
 
 def parse_persian_datetime(raw_text):
-    raw_text = raw_text.strip()
+    raw_text = raw_text.replace('\u200c', ' ').strip()
 
-    match = re.match(r"(\w+)\s+(\d{1,2})\s+(\w+)\s+(\d{4})\s*-\s*(\d{1,2}):(\d{2})", raw_text)
+    pattern = r"(?P<weekday>\S+\s*\S*)\s+(?P<day>\d{1,2})\s+(?P<month>\S+)\s+(?P<year>\d{4})\s*-\s*(?P<hour>\d{1,2}):(?P<minute>\d{2})"
+    match = re.match(pattern, raw_text)
     if not match:
-        return None
+        raise ValueError(f"Pattern mismatch: can't parse `{raw_text}`")
 
-    weekday_name, day, month_name, year, hour, minute = match.groups()
+    groups = match.groupdict()
+    day = int(groups["day"])
+    month_name = groups["month"]
+    year = int(groups["year"])
+    hour = int(groups["hour"])
+    minute = int(groups["minute"])
 
     month_map = {
         "فروردین": 1, "اردیبهشت": 2, "خرداد": 3,
@@ -19,7 +25,10 @@ def parse_persian_datetime(raw_text):
 
     month = month_map.get(month_name)
     if not month:
-        return None
+        raise ValueError(f"Unknown Persian month: `{month_name}`")
 
-    jdate = jdatetime.datetime(int(year), month, int(day), int(hour), int(minute))
-    return jdate.togregorian()
+    try:
+        jdate = jdatetime.datetime(year, month, day, hour, minute)
+        return jdate.togregorian()
+    except ValueError as e:
+        raise ValueError(f"Invalid Jalali date: {e}")
