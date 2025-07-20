@@ -11,12 +11,17 @@ class NewsListSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(
         many=True,
         read_only=True,
-        slug_field='name' 
+        slug_field='name'
     )
+    cover_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = News
-        fields = ['id', 'title', 'slug', 'summary', 'published_at', 'tags']
+        fields = ['id', 'title', 'slug', 'summary', 'published_at', 'tags', 'cover_image_url']
+
+    def get_cover_image_url(self, obj):
+        main_image = obj.images.filter(is_main=True).first()
+        return main_image.image_url if main_image else None
 
 
 class NewsCreateSerializer(serializers.ModelSerializer):
