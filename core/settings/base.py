@@ -1,9 +1,14 @@
 from pathlib import Path
+import os
+import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env')
+
+SECRET_KEY = env('SECRET_KEY')
 
 # Application definition
-
 INSTALLED_APPS = [
 	'rest_framework',
     'djoser',
@@ -14,6 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'django_celery_beat',
+	'django_celery_results',
 	'news.apps.NewsConfig',
 	'scraper_control.apps.ScraperControlConfig',
 ]
@@ -116,3 +123,18 @@ STORAGES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# save Celery task results in Django's database
+CELERY_RESULT_BACKEND = "django-db"
+
+# store additional task metadata like name, args, retries (only works with supported result backends)
+CELERY_RESULT_EXTENDED = True
+
+# broker_connection_retry_on_startup
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# This configures Redis as the datastore between Django + Celery
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+
+# this allows you to schedule items in the Django admin.
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"

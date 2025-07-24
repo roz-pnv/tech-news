@@ -3,7 +3,7 @@ from django.utils.text import slugify
 def generate_unique_slug(instance, source_field='title', slug_field='slug'):
     model = instance.__class__
     value = getattr(instance, source_field)
-    base_slug = slugify(value)
+    base_slug = slugify(value, allow_unicode=True)
     slug = base_slug
     i = 1
 
