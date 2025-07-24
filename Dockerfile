@@ -29,4 +29,4 @@ RUN pip install --upgrade pip && \
 
 COPY . /technews/
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120"]
