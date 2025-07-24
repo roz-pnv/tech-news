@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.12-slim-bullseye
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -22,9 +22,11 @@ ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
 WORKDIR /technews
-COPY . /technews/
+COPY requirements.txt .
 
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
+
+COPY . /technews/
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

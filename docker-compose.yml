@@ -19,10 +19,17 @@ services:
     depends_on:
       - redis
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+
   celery_worker:
     build: .
-    container_name: technews_celery 
-    command: celery -A core worker --loglevel=info
+    container_name: technews_celery_worker
+    command: celery -A core worker --loglevel=info -E
     volumes:
       - .:/technews
     env_file:
@@ -30,10 +37,29 @@ services:
     depends_on: 
       - web
       - redis
-    
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
+
+  celery_beat:
+    build: .
+    container_name: technews_celery_beat
+    command: celery -A core beat --loglevel=info
+    volumes:
+      - .:/technews
     env_file:
       - .env
+    depends_on:
+      - redis
+      - web
+  
+  flower:
+    build: .
+    container_name: technews_celery_flower
+    command: celery -A core flower --basic_auth=admin:password123
+    ports:
+      - "5555:5555"
+    volumes:
+      - .:/technews
+    working_dir: /technews
+    env_file:
+      - .env
+    depends_on:
+      - redis

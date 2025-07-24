@@ -127,6 +127,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # save Celery task results in Django's database
 CELERY_RESULT_BACKEND = "django-db"
 
+# store additional task metadata like name, args, retries (only works with supported result backends)
+CELERY_RESULT_EXTENDED = True
+
 # broker_connection_retry_on_startup
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
