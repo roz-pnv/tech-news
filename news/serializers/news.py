@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from news.models import News
@@ -7,7 +8,7 @@ from news.serializers.news_image import NewsImageSerializer
 
 
 class NewsListSerializer(serializers.ModelSerializer):
-    summary = serializers.ReadOnlyField()
+    summary = serializers.SerializerMethodField()
     tags = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -19,9 +20,14 @@ class NewsListSerializer(serializers.ModelSerializer):
         model = News
         fields = ['id', 'title', 'slug', 'summary', 'published_at', 'tags', 'cover_image_url']
 
+    @extend_schema_field(serializers.URLField(allow_null=True))
     def get_cover_image_url(self, obj):
         main_image = obj.images.filter(is_main=True).first()
         return main_image.image_url if main_image else None
+
+    @extend_schema_field(serializers.CharField())
+    def get_summary(self, obj):
+        return obj.summary
 
 
 class NewsCreateSerializer(serializers.ModelSerializer):
