@@ -5,8 +5,17 @@ from django.urls import reverse
 from core.models.base import TimestampedModel  
 
 class Tag(TimestampedModel):
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=120, unique=True, blank=True)
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        help_text="The name of the tag (must be unique)"
+    )
+    slug = models.SlugField(
+        max_length=120,
+        unique=True,
+        blank=True,
+        help_text="URL-friendly version of the tag name (auto-generated if left blank)"
+    )
 
     class Meta:
         verbose_name = "Tag"

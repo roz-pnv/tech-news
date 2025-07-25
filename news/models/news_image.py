@@ -3,15 +3,38 @@ from django.db import models
 from core.models.base import TimestampedModel  
 
 class NewsImage(TimestampedModel):
-    news = models.ForeignKey("News", on_delete=models.CASCADE, related_name="images")
-    image_file = models.ImageField(upload_to="news/images/", null=True, blank=True)
-    image_url = models.URLField(max_length=1000, null=True, blank=True)
-    alt_text = models.CharField(max_length=255, null=True, blank=True)
-    is_main = models.BooleanField(default=False)
+    news = models.ForeignKey(
+        "News",
+        on_delete=models.CASCADE,
+        related_name="images",
+        help_text="The news item this image belongs to"
+    )
+    image_file = models.ImageField(
+        upload_to="news/images/",
+        null=True,
+        blank=True,
+        help_text="Uploaded image file (if available locally)"
+    )
+    image_url = models.URLField(
+        max_length=1000,
+        null=True,
+        blank=True,
+        help_text="Remote URL for the image (if scraped or external)"
+    )
+    alt_text = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Alternative descriptive text for the image"
+    )
+    is_main = models.BooleanField(
+        default=False,
+        help_text="Indicates if this is the primary image for the news"
+    )
     position = models.PositiveIntegerField(
         null=True, 
         blank=True,
-        help_text="Order of images for each news item",
+        help_text="Ordering index for multiple images of a news item"
     )
 
     class Meta:
