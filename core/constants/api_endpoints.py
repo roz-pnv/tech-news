@@ -7,6 +7,10 @@ API_ENDPOINTS = {
         "description": "Get published news list",
         "path": "/news/"
     },
+	"news_detail": {
+        "description": "Retrieve a detailed view of a news article by slug",
+        "path": "/news/<slug:slug>/"
+    },
     "news_create": {
         "description": "Create a new news article",
         "path": "/news/create/"

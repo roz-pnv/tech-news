@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema_view
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import CreateModelMixin
+from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.mixins import DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated
@@ -16,6 +17,7 @@ from news.models import News
 from news.serializers.news import NewsListSerializer
 from news.serializers.news import NewsCreateSerializer
 from news.serializers.news import NewsUpdateSerializer
+from news.serializers.news import NewsDetailSerializer
 
 
 @extend_schema(
@@ -93,3 +95,24 @@ class NewsMutationViewSet(
     
         instance.delete()
 
+
+@extend_schema_view(
+    retrieve=extend_schema(
+        summary="Retrieve a specific published news item",
+        description="Returns the details of a published news article by ID. Only published articles are accessible.",
+        responses=NewsListSerializer
+    )
+)
+class NewsDetailViewSet(
+    GenericViewSet,
+    RetrieveModelMixin, 
+):
+    serializer_class = NewsDetailSerializer  
+    permission_classes = [AllowAny]
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        return (
+            News.objects.filter(published_at__isnull=False)
+            .prefetch_related('tags')
+        )

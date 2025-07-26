@@ -1,11 +1,14 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 from news.models import News
 from news.models import NewsImage
 from news.models import Tag
+from news.serializers.news_image import NewsImageSerializer
 from news.serializers.news_image import NewsImageCreateSerializer
 from news.serializers.news_image import NewsImageUpdateSerializer
+from news.serializers.tag import TagSerializer
 from news.serializers.tag import TagCreateSerializer
 from news.serializers.tag import TagUpdateSerializer
 
@@ -18,19 +21,25 @@ class NewsListSerializer(serializers.ModelSerializer):
         slug_field='name'
     )
     cover_image_url = serializers.SerializerMethodField()
+    detail_url = serializers.SerializerMethodField()
 
     class Meta:
         model = News
-        fields = ['id', 'title', 'slug', 'summary', 'published_at', 'tags', 'cover_image_url']
+        fields = ['id', 'title', 'detail_url', 'summary', 'published_at', 'tags', 'cover_image_url']
 
     @extend_schema_field(serializers.URLField(allow_null=True))
     def get_cover_image_url(self, obj):
         main_image = obj.images.filter(is_main=True).first()
-        return main_image.image_url if main_image else None
+        return main_image.get_image() if main_image else None
 
     @extend_schema_field(serializers.CharField())
     def get_summary(self, obj):
         return obj.summary
+    
+    @extend_schema_field(serializers.URLField())
+    def get_detail_url(self, obj):
+        request = self.context.get('request')
+        return reverse('news-detail', kwargs={'slug': obj.slug}, request=request)
 
 
 class NewsCreateSerializer(serializers.ModelSerializer):
@@ -100,4 +109,13 @@ class NewsUpdateSerializer(serializers.ModelSerializer):
                     NewsImage.objects.create(news=instance, **img)
 
         return instance
+    
+
+class NewsDetailSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True)
+    images = NewsImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = News
+        fields = ['id', 'title', 'tags', 'body', 'images', 'published_at']
     
