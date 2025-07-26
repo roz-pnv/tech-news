@@ -4,8 +4,10 @@ from rest_framework import serializers
 from news.models import News
 from news.models import NewsImage
 from news.models import Tag
-from news.serializers.news_image import NewsImageSerializer
+from news.serializers.news_image import NewsImageCreateSerializer
+from news.serializers.news_image import NewsImageUpdateSerializer
 from news.serializers.tag import TagCreateSerializer
+from news.serializers.tag import TagUpdateSerializer
 
 
 class NewsListSerializer(serializers.ModelSerializer):
@@ -33,7 +35,7 @@ class NewsListSerializer(serializers.ModelSerializer):
 
 class NewsCreateSerializer(serializers.ModelSerializer):
     tags = TagCreateSerializer(many=True)
-    images = NewsImageSerializer(many=True, required=False)
+    images = NewsImageCreateSerializer(many=True, required=False)
 
     class Meta:
         model = News
@@ -55,4 +57,47 @@ class NewsCreateSerializer(serializers.ModelSerializer):
             NewsImage.objects.create(news=news, **image_data)
 
         return news
+    
+
+
+class NewsUpdateSerializer(serializers.ModelSerializer):
+    tags = TagUpdateSerializer(many=True, required=False)
+    images = NewsImageUpdateSerializer(many=True, required=False)
+
+    class Meta:
+        model = News
+        fields = ['title', 'body', 'tags', 'images', 'published_at']
+
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop('tags', None)
+        images_data = validated_data.pop('images', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if tags_data is not None:
+            tag_instances = []
+            for tag in tags_data:
+                tag_id = tag.get('id')
+                if tag_id:
+                    obj = Tag.objects.filter(id=tag_id).first()
+                    if obj:
+                        obj.name = tag.get('name', obj.name)
+                        obj.save()
+                        tag_instances.append(obj)
+                else:
+                    obj, _ = Tag.objects.get_or_create(name=tag['name'])
+                    tag_instances.append(obj)
+            instance.tags.set(tag_instances)
+
+        if images_data is not None:
+            for img in images_data:
+                img_id = img.pop('id', None) 
+                if img_id:
+                    NewsImage.objects.filter(id=img_id, news=instance).update(**img)
+                else:
+                    NewsImage.objects.create(news=instance, **img)
+
+        return instance
     

@@ -6,8 +6,14 @@ from .models.tag import Tag
 
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ['title', 'published_at']
+    list_display = ['id', 'title', 'published_at']
     filter_horizontal = ['tags']
+
+@admin.register(NewsImage)
+class NewsImageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'news','is_main']
     
-admin.site.register(NewsImage)
-admin.site.register(Tag)
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+

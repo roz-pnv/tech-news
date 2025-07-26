@@ -13,3 +13,12 @@ class TagCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         tag, created = Tag.objects.get_or_create(name=validated_data['name'])
         return tag
+
+
+class TagUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = Tag
+        fields = ['id', 'name']
+        

@@ -11,6 +11,14 @@ API_ENDPOINTS = {
         "description": "Create a new news article",
         "path": "/api/news/create/"
     },
+    "news_update": {
+        "description": "Update a news article completely by slug",
+        "path": "/api/news/<slug:slug>/update/"
+    },
+    "news_partial_update": {
+        "description": "Partially update a news article by slug",
+        "path": "/api/news/<slug:slug>/partial/"
+    },
     "auth_register": {
         "description": "Register a new user account",
         "path": "/auth/users/"
