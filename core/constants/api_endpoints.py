@@ -5,19 +5,23 @@ API_ENDPOINTS = {
     },
     "news_list": {
         "description": "Get published news list",
-        "path": "/api/news/"
+        "path": "/news/"
     },
     "news_create": {
         "description": "Create a new news article",
-        "path": "/api/news/create/"
+        "path": "/news/create/"
     },
     "news_update": {
         "description": "Update a news article completely by slug",
-        "path": "/api/news/<slug:slug>/update/"
+        "path": "/news/<slug:slug>/update/"
     },
     "news_partial_update": {
         "description": "Partially update a news article by slug",
-        "path": "/api/news/<slug:slug>/partial/"
+        "path": "/news/<slug:slug>/partial/"
+    },
+	"news_delete": {
+        "description": "Delete a news article by slug",
+        "path": "/news/<slug:slug>/delete/"
     },
     "auth_register": {
         "description": "Register a new user account",

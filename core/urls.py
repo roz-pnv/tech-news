@@ -18,9 +18,9 @@ urlpatterns = [
     path('auth/', include('djoser.urls.jwt')),
     path('', redirect_to_api),
 	path('api/', APIRootView.as_view(), name='api-root'), 
-    path('api/', include('news.urls')), 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/docs/', SpectacularSwaggerSplitView.as_view(url_name='schema')),
+    path('news/', include('news.urls')), 
 ]
 
 if settings.DEBUG:

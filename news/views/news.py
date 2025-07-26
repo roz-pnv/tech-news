@@ -6,6 +6,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import UpdateModelMixin
+from rest_framework.mixins import DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 
@@ -59,11 +60,17 @@ class NewsListViewSet(
         request=NewsUpdateSerializer,
         responses=NewsUpdateSerializer,
     ),
+    destroy=extend_schema(
+        summary="Delete a news article",
+        description="Deletes a news article by slug. Requires JWT authentication.",
+        responses={204: None},
+    ),
 )
 class NewsMutationViewSet(
     GenericViewSet,
     CreateModelMixin,
     UpdateModelMixin,
+    DestroyModelMixin,
 ):
     queryset = News.objects.all()
     permission_classes = [IsAuthenticated]
@@ -78,3 +85,11 @@ class NewsMutationViewSet(
 
     def perform_create(self, serializer):
         serializer.save() 
+
+    def perform_destroy(self, instance):
+        for image in instance.images.all():
+            if image.image_file:
+                image.image_file.delete(save=False)
+    
+        instance.delete()
+
