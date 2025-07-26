@@ -22,9 +22,9 @@ class NewsModelTest(TestCase):
         self.assertTrue(representation.startswith("<News id="))
         self.assertIn("title='AI Revolution'", representation)
 
-    # def test_get_absolute_url_contains_slug(self):
-    #     url = self.news.get_absolute_url()
-    #     self.assertIn("ai-revolution", url)
+    def test_get_absolute_url_contains_slug(self):
+        url = self.news.get_absolute_url()
+        self.assertIn("ai-revolution", url)
 
     def test_summary_truncates_body(self):
         summary = self.news.summary
@@ -88,7 +88,3 @@ class TagModelTest(TestCase):
         representation = repr(self.tag)
         self.assertIn(f"id={self.tag.pk}", representation)
         self.assertIn("name='Science'", representation)
-
-    # def test_get_absolute_url_contains_slug(self):
-    #     url = self.tag.get_absolute_url()
-    #     self.assertIn("science", url)
