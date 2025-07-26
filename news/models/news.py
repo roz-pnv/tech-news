@@ -4,12 +4,32 @@ from django.urls import reverse
 from core.models.base import TimestampedModel
 
 class News(TimestampedModel):
-    title = models.CharField(max_length=255)
-    tags = models.ManyToManyField("Tag", related_name="news_items")
-    slug = models.SlugField(unique=True, blank=True)
-    body = models.TextField()
-    source = models.CharField(max_length=255)
-    published_at = models.DateTimeField(null=True, blank=True)
+    title = models.CharField(
+        max_length=255,
+        help_text="The title of the news article"
+    )
+    body = models.TextField(
+        help_text="Full text content of the news"
+    )
+    source = models.CharField(
+        max_length=255,
+        help_text="Origin or publisher of the news"
+    )
+    published_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Datetime when the news was published"
+    )
+    slug = models.SlugField(
+        unique=True,
+        blank=True,
+        help_text="URL-friendly identifier for the article"
+    )
+    tags = models.ManyToManyField(
+        "Tag",
+        related_name="news_items",
+        help_text="List of tags associated with the news"
+    )
 
     class Meta:
         verbose_name = "News"

@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 	'django_celery_beat',
 	'django_celery_results',
+	'drf_spectacular',
 	'news.apps.NewsConfig',
 	'scraper_control.apps.ScraperControlConfig',
 ]
@@ -46,6 +47,8 @@ REST_FRAMEWORK = {
 	"DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend"
     ],
+	'DEFAULT_SCHEMA_CLASS':
+        'drf_spectacular.openapi.AutoSchema',
 }
 
 ROOT_URLCONF = 'core.urls'
@@ -138,3 +141,22 @@ CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
 
 # this allows you to schedule items in the Django admin.
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'TechNews REST API',
+    'DESCRIPTION': (
+        "TechNews is a Django project that collects, filters, and shares tech news through a secure API. It’s built in a way that makes it easy to maintain, automate, and scale over time.\n\n"
+        "• API Setup:\n\n"
+        "  Users can search news by tags or keywords. The API uses JWT (via Djoser) to keep things secure, and has extra tools like slug generation, file/media support, and access control based on user roles. "
+        "Everything is well tested, and there are different settings for development, testing, and production.\n\n"
+        "• News Gathering:\n\n"
+        "  Scrapy and Selenium work together to get articles from websites like Zoomit. Persian dates are converted with a custom tool, duplicates are skipped, and only complete news posts are saved and shown. "
+        "All images from each article—including embedded visuals and cover images—are collected, saved to the database, and included in API responses.\n\n"
+        "• Automation & Background Tasks:\n\n"
+        "  Celery runs scraping tasks in the background, and Celery Beat sets the schedule. Redis handles message passing, and Flower gives a dashboard to see how tasks are doing. "
+        "Everything runs inside Docker containers—including Django, Celery, Redis, Flower—so it’s easy to deploy and update.\n\n"
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': True,
+}
+
