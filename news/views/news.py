@@ -1,6 +1,7 @@
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema_view
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import CreateModelMixin
@@ -18,7 +19,10 @@ from news.filters import NewsFilter
     description="Returns a paginated list of news articles that have a valid publish date. Supports filtering by tags and keywords.",
     responses=NewsListSerializer
 )
-class NewsListViewSet(ListModelMixin, GenericViewSet):
+class NewsListViewSet(
+    GenericViewSet,
+    ListModelMixin, 
+):
     serializer_class = NewsListSerializer
     permission_classes = [AllowAny]
     pagination_class = StandardResultsSetPagination
@@ -26,23 +30,31 @@ class NewsListViewSet(ListModelMixin, GenericViewSet):
     filterset_class = NewsFilter
     
     def get_queryset(self):
-        now = timezone.now()
         return (
             News.objects.filter(published_at__isnull=False)
             .prefetch_related('tags')
             .order_by('-published_at')  
         )
     
-@extend_schema(
-    summary="Create a new news item",
-    description="Creates a new news article. Requires JWT authentication.",
-    request=NewsCreateSerializer,
-    responses=NewsCreateSerializer
+
+@extend_schema_view(
+    create=extend_schema(
+        summary="Create a news item",
+        description="Creates a new news article. Requires JWT authentication.",
+        request=NewsCreateSerializer,
+        responses=NewsCreateSerializer,
+    ),
 )
-class NewsCreateViewSet(CreateModelMixin, GenericViewSet):
+class NewsMutationViewSet(
+    GenericViewSet,
+    CreateModelMixin,
+):
     queryset = News.objects.all()
-    serializer_class = NewsCreateSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return NewsCreateSerializer
 
     def perform_create(self, serializer):
         serializer.save() 

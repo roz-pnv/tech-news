@@ -5,6 +5,7 @@ from news.models import News
 from news.models import NewsImage
 from news.models import Tag
 from news.serializers.news_image import NewsImageSerializer
+from news.serializers.tag import TagCreateSerializer
 
 
 class NewsListSerializer(serializers.ModelSerializer):
@@ -31,7 +32,7 @@ class NewsListSerializer(serializers.ModelSerializer):
 
 
 class NewsCreateSerializer(serializers.ModelSerializer):
-    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+    tags = TagCreateSerializer(many=True)
     images = NewsImageSerializer(many=True, required=False)
 
     class Meta:
@@ -41,8 +42,14 @@ class NewsCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         images_data = validated_data.pop('images', [])
         tags_data = validated_data.pop('tags', [])
+
         news = News.objects.create(**validated_data)
-        news.tags.set(tags_data)
+
+        tag_instances = []
+        for tag_data in tags_data:
+            tag = TagCreateSerializer().create(tag_data)
+            tag_instances.append(tag)
+        news.tags.set(tag_instances)
 
         for image_data in images_data:
             NewsImage.objects.create(news=news, **image_data)
